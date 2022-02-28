@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Review {
 
     @Id
-    private long id;
+    private String id;
     private long concertId;
     private String authorName;
     private LocalDateTime dateTimeofReview;
@@ -21,11 +21,11 @@ public class Review {
         this.numberOfStars = numberOfStars;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -82,6 +82,6 @@ public class Review {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Review review = (Review) obj;
-        return id == review.getId();
+        return id.equals(review.getId());
     }
 }
