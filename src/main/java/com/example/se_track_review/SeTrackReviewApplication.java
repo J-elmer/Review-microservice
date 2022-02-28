@@ -21,8 +21,8 @@ public class SeTrackReviewApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Review test = new Review(1, "jelmer", LocalDateTime.now(),5);
-        Review test3 = new Review(1, "jelmer3", LocalDateTime.now(),5);
+        Review test = new Review(1, "jelmer",5);
+        Review test3 = new Review(1, "jelmer3",5);
         this.reviewRepository.save(test);
         this.reviewRepository.save(test3);
     }

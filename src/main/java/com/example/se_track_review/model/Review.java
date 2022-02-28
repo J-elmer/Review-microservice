@@ -1,6 +1,7 @@
 package com.example.se_track_review.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,10 +15,10 @@ public class Review {
     private LocalDateTime dateTimeofReview;
     private int numberOfStars;
 
-    public Review(int concertId, String authorName, LocalDateTime dateTimeofReview, int numberOfStars) {
+    public Review(long concertId, String authorName, int numberOfStars) {
         this.concertId = concertId;
         this.authorName = authorName;
-        this.dateTimeofReview = dateTimeofReview;
+        this.dateTimeofReview = LocalDateTime.now();
         this.numberOfStars = numberOfStars;
     }
 
