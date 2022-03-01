@@ -1,8 +1,6 @@
 package com.example.se_track_review.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
