@@ -14,12 +14,14 @@ public class Review {
     private String authorName;
     private LocalDateTime dateTimeofReview;
     private int numberOfStars;
+    private String reviewText;
 
-    public Review(long concertId, String authorName, int numberOfStars) {
+    public Review(long concertId, String authorName, int numberOfStars, String reviewText) {
         this.concertId = concertId;
         this.authorName = authorName;
         this.dateTimeofReview = LocalDateTime.now();
         this.numberOfStars = numberOfStars;
+        this.reviewText = reviewText;
     }
 
     public String getId() {
@@ -62,14 +64,23 @@ public class Review {
         this.numberOfStars = numberOfStars;
     }
 
+    public String getReviewText() {
+        return reviewText;
+    }
+
+    public void setReviewText(String reviewText) {
+        this.reviewText = reviewText;
+    }
+
     @Override
     public String toString() {
         return "Review{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", concertId=" + concertId +
                 ", authorName='" + authorName + '\'' +
                 ", dateTimeofReview=" + dateTimeofReview +
                 ", numberOfStars=" + numberOfStars +
+                ", reviewText='" + reviewText + '\'' +
                 '}';
     }
 

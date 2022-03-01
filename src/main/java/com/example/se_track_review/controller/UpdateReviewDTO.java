@@ -9,12 +9,14 @@ public final class UpdateReviewDTO {
     private long concertId;
     private String authorName;
     private int numberOfStars;
+    private String reviewText;
 
-    public UpdateReviewDTO(String reviewId, long concertId, String authorName, int numberOfStars) {
+    public UpdateReviewDTO(String reviewId, long concertId, String authorName, int numberOfStars, String reviewText) {
         this.reviewId = reviewId;
         this.concertId = concertId;
         this.authorName = authorName;
         this.numberOfStars = numberOfStars;
+        this.reviewText = reviewText;
     }
 
     public String getReviewId() {
@@ -31,5 +33,9 @@ public final class UpdateReviewDTO {
 
     public int getNumberOfStars() {
         return numberOfStars;
+    }
+
+    public String getReviewText() {
+        return reviewText;
     }
 }

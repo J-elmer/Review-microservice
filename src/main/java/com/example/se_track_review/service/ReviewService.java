@@ -48,7 +48,7 @@ public class ReviewService {
         } catch (HttpClientErrorException e) {
             throw new InvalidConcertIdException();
         }
-        Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars());
+        Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars(), newReviewDTO.getReviewText());
         this.reviewRepository.save(reviewToBeSaved);
     }
 
@@ -77,6 +77,9 @@ public class ReviewService {
         }
         if (updateReviewDTO.getNumberOfStars() > 0 && updateReviewDTO.getNumberOfStars() != reviewToUpdate.getNumberOfStars()) {
             reviewToUpdate.setNumberOfStars(updateReviewDTO.getNumberOfStars());
+        }
+        if (updateReviewDTO.getReviewText() != null && !updateReviewDTO.getReviewText().equals(reviewToUpdate.getReviewText())) {
+            reviewToUpdate.setReviewText(updateReviewDTO.getReviewText());
         }
         this.reviewRepository.save(reviewToUpdate);
     }

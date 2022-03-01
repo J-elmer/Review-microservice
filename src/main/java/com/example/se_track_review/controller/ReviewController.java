@@ -7,6 +7,7 @@ import com.example.se_track_review.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,7 +68,7 @@ public class ReviewController {
      * @return HttpStatus 201 if everything went well, else 400
      */
     @PostMapping(value="new")
-    public ResponseEntity<?> newReview(@RequestBody NewReviewDTO newReviewDTO) {
+    public ResponseEntity<?> newReview(@Validated @RequestBody NewReviewDTO newReviewDTO) {
         try {
             this.reviewService.newReview(newReviewDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
@@ -82,7 +83,7 @@ public class ReviewController {
      * @return HttpStatus 200 if everything went well, else 400
      */
     @PutMapping(value="update")
-    public ResponseEntity<?> updateReview(@RequestBody UpdateReviewDTO updateReviewDTO) {
+    public ResponseEntity<?> updateReview(@Validated @RequestBody UpdateReviewDTO updateReviewDTO) {
         try {
             this.reviewService.updateReview(updateReviewDTO);
             return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -99,7 +100,7 @@ public class ReviewController {
      * @return 200 if everything went well, else 400
      */
     @DeleteMapping(value="delete")
-    public ResponseEntity<?> deleteReview(@RequestBody String reviewId) {
+    public ResponseEntity<?> deleteReview(@RequestParam String reviewId) {
         try {
             this.reviewService.deleteReview(reviewId);
             return ResponseEntity.status(HttpStatus.OK).body(null);

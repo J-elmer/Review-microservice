@@ -14,11 +14,14 @@ public final class NewReviewDTO {
     @Min(value=1)
     @Max(value=5)
     private int numberOfStars;
+    @NotEmpty(message = "Review text is mandatory")
+    private String reviewText;
 
-    public NewReviewDTO(long concertId, String authorName, int numberOfStars) {
+    public NewReviewDTO(long concertId, String authorName, int numberOfStars, String reviewText) {
         this.concertId = concertId;
         this.authorName = authorName;
         this.numberOfStars = numberOfStars;
+        this.reviewText = reviewText;
     }
 
     public long getConcertId() {
@@ -31,5 +34,9 @@ public final class NewReviewDTO {
 
     public int getNumberOfStars() {
         return numberOfStars;
+    }
+
+    public String getReviewText() {
+        return reviewText;
     }
 }
