@@ -70,8 +70,8 @@ public class ReviewController {
     @PostMapping(value="new")
     public ResponseEntity<?> newReview(@Validated @RequestBody NewReviewDTO newReviewDTO) {
         try {
-            this.reviewService.newReview(newReviewDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+            Review returnedReview = this.reviewService.newReview(newReviewDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new JsonResponseDTO(returnedReview.getId()));
         } catch (InvalidConcertIdException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Invalid concertId"));
         }

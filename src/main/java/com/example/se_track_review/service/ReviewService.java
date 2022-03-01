@@ -41,15 +41,17 @@ public class ReviewService {
      * method to create new review
      * @param newReviewDTO dto containing the necessary information
      * @throws InvalidConcertIdException if the given concertId is invalid
+     * @return
      */
-    public void newReview(NewReviewDTO newReviewDTO) throws InvalidConcertIdException {
+    public Review newReview(NewReviewDTO newReviewDTO) throws InvalidConcertIdException {
         try {
             this.checkIfConcertIdIsValid(newReviewDTO.getConcertId());
         } catch (HttpClientErrorException e) {
             throw new InvalidConcertIdException();
         }
         Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars(), newReviewDTO.getReviewText());
-        this.reviewRepository.save(reviewToBeSaved);
+        Review returnedReview = this.reviewRepository.save(reviewToBeSaved);
+        return returnedReview;
     }
 
     /**
@@ -57,6 +59,7 @@ public class ReviewService {
      * @param updateReviewDTO contains information needed to update
      * @throws InvalidConcertIdException if concertId is not valid
      * @throws InvalidStarsException if the number of stars is less than 1 or greater than 5
+     * @return
      */
     public void updateReview(UpdateReviewDTO updateReviewDTO) throws InvalidConcertIdException, InvalidStarsException {
         Review reviewToUpdate = this.reviewRepository.findById(updateReviewDTO.getReviewId()).orElseThrow();
