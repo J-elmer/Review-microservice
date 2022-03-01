@@ -1,6 +1,9 @@
 package com.example.se_track_review.service;
 
+import com.example.se_track_review.controller.NewReviewDTO;
+import com.example.se_track_review.controller.UpdateReviewDTO;
 import com.example.se_track_review.exception.InvalidConcertIdException;
+import com.example.se_track_review.exception.InvalidStarsException;
 import com.example.se_track_review.model.Review;
 import com.example.se_track_review.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
@@ -34,17 +37,50 @@ public class ReviewService {
         return this.reviewRepository.findByNumberOfStarsLessThanEqual(numberOfStars);
     }
 
-    public void addReview(Review review) throws InvalidConcertIdException {
+    public void newReview(NewReviewDTO newReviewDTO) throws InvalidConcertIdException {
         try {
-            this.connectToApi("http://localhost:9090/concert/" + review.getConcertId());
+            this.checkIfConcertIdIsValid(newReviewDTO.getConcertId());
         } catch (HttpClientErrorException e) {
             throw new InvalidConcertIdException();
         }
-        this.reviewRepository.save(review);
+        Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars());
+        this.reviewRepository.save(reviewToBeSaved);
     }
 
-    private String connectToApi(String apiUri) {
+    public void updateReview(UpdateReviewDTO updateReviewDTO) throws InvalidConcertIdException, InvalidStarsException {
+        Review reviewToUpdate = this.reviewRepository.findById(updateReviewDTO.getReviewId()).orElseThrow();
+        if (updateReviewDTO.getConcertId() < 0) {
+            throw new InvalidConcertIdException();
+        }
+        if (updateReviewDTO.getConcertId() > 0) {
+            this.checkIfConcertIdIsValid(updateReviewDTO.getConcertId());
+        }
+        if (updateReviewDTO.getNumberOfStars() < 0 || updateReviewDTO.getNumberOfStars() > 5) {
+            throw new InvalidStarsException();
+        }
+        if (updateReviewDTO.getConcertId() > 0 && updateReviewDTO.getConcertId() != reviewToUpdate.getConcertId()) {
+            reviewToUpdate.setConcertId(updateReviewDTO.getConcertId());
+        }
+        if (updateReviewDTO.getAuthorName() != null && !updateReviewDTO.getAuthorName().equals(reviewToUpdate.getAuthorName())) {
+            reviewToUpdate.setAuthorName(updateReviewDTO.getAuthorName());
+        }
+        if (updateReviewDTO.getNumberOfStars() > 0 && updateReviewDTO.getNumberOfStars() != reviewToUpdate.getNumberOfStars()) {
+            reviewToUpdate.setNumberOfStars(updateReviewDTO.getNumberOfStars());
+        }
+        this.reviewRepository.save(reviewToUpdate);
+    }
+
+    public void deleteReview(String reviewId) throws InvalidConcertIdException {
+        this.reviewRepository.deleteById(reviewId);
+    }
+
+    private boolean checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException {
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForObject(apiUri, String.class);
+        try {
+            restTemplate.getForObject("http://localhost:9090/concert/" + concertID, String.class);
+        } catch (HttpClientErrorException e) {
+            throw new InvalidConcertIdException();
+        }
+        return true;
     }
 }

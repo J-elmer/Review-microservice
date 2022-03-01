@@ -1,6 +1,7 @@
 package com.example.se_track_review.controller;
 
 import com.example.se_track_review.exception.InvalidConcertIdException;
+import com.example.se_track_review.exception.InvalidStarsException;
 import com.example.se_track_review.model.Review;
 import com.example.se_track_review.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +42,35 @@ public class ReviewController {
         return this.reviewService.findReviewsWithMinStars(stars);
     }
 
-    @GetMapping(value="test")
-    public ResponseEntity<String> addReview(@RequestBody Review review) {
+    @PostMapping(value="new")
+    public ResponseEntity<?> newReview(@RequestBody NewReviewDTO newReviewDTO) {
         try {
-            this.reviewService.addReview(review);
+            this.reviewService.newReview(newReviewDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        } catch (InvalidConcertIdException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Invalid concertId"));
+        }
+    }
+
+    @PutMapping(value="update")
+    public ResponseEntity<?> updateReview(@RequestBody UpdateReviewDTO updateReviewDTO) {
+        try {
+            this.reviewService.updateReview(updateReviewDTO);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (InvalidConcertIdException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid concertId");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Invalid concertId"));
+        } catch (InvalidStarsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Number of stars must be between 1 and 5"));
+        }
+    }
+
+    @DeleteMapping(value="delete")
+    public ResponseEntity<?> deleteReview(@RequestBody String reviewId) {
+        try {
+            this.reviewService.deleteReview(reviewId);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (InvalidConcertIdException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Invalid concertId"));
         }
     }
 }

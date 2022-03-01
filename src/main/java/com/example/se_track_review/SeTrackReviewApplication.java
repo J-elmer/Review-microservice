@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.time.LocalDateTime;
 
 @SpringBootApplication
-public class SeTrackReviewApplication implements CommandLineRunner {
+public class SeTrackReviewApplication {
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -18,12 +18,5 @@ public class SeTrackReviewApplication implements CommandLineRunner {
     public static void main(String[] args) {
         SpringApplication.run(SeTrackReviewApplication.class, args);
     }
-
-    @Override
-    public void run(String... args) throws Exception {
-        Review test = new Review(1, "jelmer",5);
-        Review test3 = new Review(1, "jelmer3",5);
-        this.reviewRepository.save(test);
-        this.reviewRepository.save(test3);
-    }
+    
 }
