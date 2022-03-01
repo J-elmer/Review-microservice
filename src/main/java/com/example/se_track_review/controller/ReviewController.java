@@ -22,26 +22,50 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    /**
+     * endpoint to get all reviews
+     * @return list of reviews in db
+     */
     @GetMapping(value = "/all")
     public List<Review> getAllReviews() {
         return this.reviewService.getAllReviews();
     }
 
+    /**
+     * endpoint to return reviews with a certain amount of stars
+     * @param stars number of stars as search criteria
+     * @return list of reviews
+     */
     @GetMapping(value = "/stars")
     public List<Review> getAllReviews(@RequestParam int stars) {
         return this.reviewService.findReviewsByNrOfStarts(stars);
     }
 
+    /**
+     * endpoint to get reviews that have a maximum number of stars
+     * @param stars number of stars as search criteria
+     * @return list of reviews
+     */
     @GetMapping(value = "/max-stars")
     public List<Review> getReviewsWithMaxStars(@RequestParam int stars) {
         return this.reviewService.findReviewsWithMaxStars(stars);
     }
 
+    /**
+     * endpoint to get reviews that have a minimum number of stars
+     * @param stars number of stars as search criteria
+     * @return list of reviews
+     */
     @GetMapping(value = "/min-stars")
     public List<Review> getReviewsWithMinStars(@RequestParam int stars) {
         return this.reviewService.findReviewsWithMinStars(stars);
     }
 
+    /**
+     * endpoint to create new review
+     * @param newReviewDTO dto with necessary information
+     * @return HttpStatus 201 if everything went well, else 400
+     */
     @PostMapping(value="new")
     public ResponseEntity<?> newReview(@RequestBody NewReviewDTO newReviewDTO) {
         try {
@@ -52,6 +76,11 @@ public class ReviewController {
         }
     }
 
+    /**
+     * endpoint to update a review
+     * @param updateReviewDTO with necessary information
+     * @return HttpStatus 200 if everything went well, else 400
+     */
     @PutMapping(value="update")
     public ResponseEntity<?> updateReview(@RequestBody UpdateReviewDTO updateReviewDTO) {
         try {
@@ -64,6 +93,11 @@ public class ReviewController {
         }
     }
 
+    /**
+     * endpoint to delete a review
+     * @param reviewId of review
+     * @return 200 if everything went well, else 400
+     */
     @DeleteMapping(value="delete")
     public ResponseEntity<?> deleteReview(@RequestBody String reviewId) {
         try {

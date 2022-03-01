@@ -37,6 +37,11 @@ public class ReviewService {
         return this.reviewRepository.findByNumberOfStarsLessThanEqual(numberOfStars);
     }
 
+    /**
+     * method to create new review
+     * @param newReviewDTO dto containing the necessary information
+     * @throws InvalidConcertIdException if the given concertId is invalid
+     */
     public void newReview(NewReviewDTO newReviewDTO) throws InvalidConcertIdException {
         try {
             this.checkIfConcertIdIsValid(newReviewDTO.getConcertId());
@@ -47,6 +52,12 @@ public class ReviewService {
         this.reviewRepository.save(reviewToBeSaved);
     }
 
+    /**
+     * Method to update, does various checks to make sure no invalid values are inserted
+     * @param updateReviewDTO contains information needed to update
+     * @throws InvalidConcertIdException if concertId is not valid
+     * @throws InvalidStarsException if the number of stars is less than 1 or greater than 5
+     */
     public void updateReview(UpdateReviewDTO updateReviewDTO) throws InvalidConcertIdException, InvalidStarsException {
         Review reviewToUpdate = this.reviewRepository.findById(updateReviewDTO.getReviewId()).orElseThrow();
         if (updateReviewDTO.getConcertId() < 0) {
@@ -74,6 +85,12 @@ public class ReviewService {
         this.reviewRepository.deleteById(reviewId);
     }
 
+    /**
+     * Method to check if the given concertId is valid, i.e. if it is in the database of the other application
+     * @param concertID to check
+     * @return true if everything went well
+     * @throws InvalidConcertIdException if the id is invalid, this is thrown
+     */
     private boolean checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException {
         RestTemplate restTemplate = new RestTemplate();
         try {
