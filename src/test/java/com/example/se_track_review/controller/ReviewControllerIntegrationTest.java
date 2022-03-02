@@ -72,6 +72,7 @@ class ReviewControllerIntegrationTest {
             e.printStackTrace();
         }
         try {
+            assert mvcResult != null;
             List<Review> actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Review>>() {});
             assertEquals(actual, expected);
         } catch (JsonProcessingException | UnsupportedEncodingException e) {
@@ -94,6 +95,7 @@ class ReviewControllerIntegrationTest {
         List<Review> expectedResult = new ArrayList<>();
         expectedResult.add(reviewUnderTest1);
         try {
+            assert mvcResult != null;
             List<Review> actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Review>>() {});
             assertEquals(actual, expectedResult);
             assertEquals(actual.size(), expectedResult.size());
@@ -118,6 +120,7 @@ class ReviewControllerIntegrationTest {
         expectedResult.add(reviewUnderTest1);
         expectedResult.add(reviewUnderTest2);
         try {
+            assert mvcResult != null;
             List<Review> actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Review>>() {});
             assertEquals(actual, expectedResult);
             assertEquals(actual.size(), expectedResult.size());
@@ -142,6 +145,7 @@ class ReviewControllerIntegrationTest {
         expectedResult.add(reviewUnderTest2);
         expectedResult.add(reviewUnderTest3);
         try {
+            assert mvcResult != null;
             List<Review> actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Review>>() {});
             assertEquals(actual, expectedResult);
             assertEquals(actual.size(), expectedResult.size());
@@ -164,6 +168,7 @@ class ReviewControllerIntegrationTest {
             e.printStackTrace();
         }
         try {
+            assert mvcResult != null;
             idNewReview = JsonPath.read(mvcResult.getResponse().getContentAsString(), "$.response");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
