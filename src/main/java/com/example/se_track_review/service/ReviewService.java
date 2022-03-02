@@ -104,7 +104,7 @@ public class ReviewService {
     private boolean checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException {
         RestTemplate restTemplate = new RestTemplate();
         try {
-            restTemplate.getForObject("http://localhost:9090/concert/" + concertID, String.class);
+            restTemplate.getForObject("http://host.docker.internal:9090/concert/" + concertID, String.class);
         } catch (HttpClientErrorException e) {
             throw new InvalidConcertIdException();
         }
