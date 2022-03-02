@@ -37,6 +37,10 @@ public class ReviewService {
         return this.reviewRepository.findByNumberOfStarsLessThanEqual(numberOfStars);
     }
 
+    public Review findById(String id) {
+        return this.reviewRepository.findById(id).orElseThrow();
+    }
+
     /**
      * method to create new review
      * @param newReviewDTO dto containing the necessary information

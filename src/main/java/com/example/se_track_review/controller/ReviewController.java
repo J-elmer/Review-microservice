@@ -28,7 +28,7 @@ public class ReviewController {
      * @return list of reviews in db
      */
     @GetMapping(value = "/all")
-    public List<Review> getAllReviews() {
+    public List<Review> getReviewsWithNrOfStars() {
         return this.reviewService.getAllReviews();
     }
 
@@ -38,7 +38,7 @@ public class ReviewController {
      * @return list of reviews
      */
     @GetMapping(value = "/stars")
-    public List<Review> getAllReviews(@RequestParam int stars) {
+    public List<Review> getReviewsWithNrOfStars(@RequestParam int stars) {
         return this.reviewService.findReviewsByNrOfStarts(stars);
     }
 
