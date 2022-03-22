@@ -71,6 +71,9 @@ public class ReviewController {
     public ResponseEntity<?> newReview(@Validated @RequestBody NewReviewDTO newReviewDTO) {
         try {
             Review returnedReview = this.reviewService.newReview(newReviewDTO);
+            if (returnedReview == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Cannot review concert in the future"));
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(new JsonResponseDTO(returnedReview.getId()));
         } catch (InvalidConcertIdException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Invalid concertId"));

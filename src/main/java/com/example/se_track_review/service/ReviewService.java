@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -48,14 +50,12 @@ public class ReviewService {
      * @return
      */
     public Review newReview(NewReviewDTO newReviewDTO) throws InvalidConcertIdException {
-        try {
-            this.checkIfConcertIdIsValid(newReviewDTO.getConcertId());
-        } catch (HttpClientErrorException e) {
-            throw new InvalidConcertIdException();
+        if (this.checkIfConcertIdIsValid(newReviewDTO.getConcertId())) {
+            Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars(), newReviewDTO.getReviewText());
+            Review returnedReview = this.reviewRepository.save(reviewToBeSaved);
+            return returnedReview;
         }
-        Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars(), newReviewDTO.getReviewText());
-        Review returnedReview = this.reviewRepository.save(reviewToBeSaved);
-        return returnedReview;
+        return null;
     }
 
     /**
@@ -104,7 +104,12 @@ public class ReviewService {
     private boolean checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException {
         RestTemplate restTemplate = new RestTemplate();
         try {
-            restTemplate.getForObject("http://host.docker.internal:9090/concert/" + concertID, String.class);
+            String response = restTemplate.getForObject("http://host.docker.internal:9090/concert/" + concertID, String.class);
+            String day = response.substring(response.indexOf("day") + 6, response.indexOf("day") + 16);
+            LocalDate dateOfConcert = LocalDate.parse(day, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            if (LocalDate.now().isBefore(dateOfConcert)) {
+                return false;
+            }
         } catch (HttpClientErrorException e) {
             throw new InvalidConcertIdException();
         }
