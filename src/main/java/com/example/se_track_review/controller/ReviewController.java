@@ -1,5 +1,6 @@
 package com.example.se_track_review.controller;
 
+import com.example.se_track_review.exception.ConcertNotPerformedException;
 import com.example.se_track_review.exception.InvalidConcertIdException;
 import com.example.se_track_review.exception.InvalidStarsException;
 import com.example.se_track_review.model.Review;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequestMapping("review")
 public class ReviewController {
 
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
 
     @Autowired
     public ReviewController(ReviewService reviewService) {
@@ -71,12 +72,11 @@ public class ReviewController {
     public ResponseEntity<?> newReview(@Validated @RequestBody NewReviewDTO newReviewDTO) {
         try {
             Review returnedReview = this.reviewService.newReview(newReviewDTO);
-            if (returnedReview == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Cannot review concert in the future"));
-            }
             return ResponseEntity.status(HttpStatus.CREATED).body(new JsonResponseDTO(returnedReview.getId()));
         } catch (InvalidConcertIdException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Invalid concertId"));
+        } catch (ConcertNotPerformedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Cannot review concert in the future"));
         }
     }
 
@@ -94,6 +94,8 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Invalid concertId"));
         } catch (InvalidStarsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Number of stars must be between 1 and 5"));
+        } catch (ConcertNotPerformedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Cannot review concert in the future"));
         }
     }
 

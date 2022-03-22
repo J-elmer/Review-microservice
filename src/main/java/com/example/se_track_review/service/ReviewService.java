@@ -2,22 +2,22 @@ package com.example.se_track_review.service;
 
 import com.example.se_track_review.controller.NewReviewDTO;
 import com.example.se_track_review.controller.UpdateReviewDTO;
+import com.example.se_track_review.exception.ConcertNotPerformedException;
 import com.example.se_track_review.exception.InvalidConcertIdException;
 import com.example.se_track_review.exception.InvalidStarsException;
 import com.example.se_track_review.model.Review;
 import com.example.se_track_review.repository.ReviewRepository;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
 public class ReviewService {
 
-    private ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository;
 
     public ReviewService(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
@@ -47,13 +47,12 @@ public class ReviewService {
      * method to create new review
      * @param newReviewDTO dto containing the necessary information
      * @throws InvalidConcertIdException if the given concertId is invalid
-     * @return
+     * @return Review created
      */
-    public Review newReview(NewReviewDTO newReviewDTO) throws InvalidConcertIdException {
+    public Review newReview(NewReviewDTO newReviewDTO) throws InvalidConcertIdException, ConcertNotPerformedException {
         if (this.checkIfConcertIdIsValid(newReviewDTO.getConcertId())) {
             Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars(), newReviewDTO.getReviewText());
-            Review returnedReview = this.reviewRepository.save(reviewToBeSaved);
-            return returnedReview;
+            return this.reviewRepository.save(reviewToBeSaved);
         }
         return null;
     }
@@ -63,9 +62,8 @@ public class ReviewService {
      * @param updateReviewDTO contains information needed to update
      * @throws InvalidConcertIdException if concertId is not valid
      * @throws InvalidStarsException if the number of stars is less than 1 or greater than 5
-     * @return
      */
-    public void updateReview(UpdateReviewDTO updateReviewDTO) throws InvalidConcertIdException, InvalidStarsException {
+    public void updateReview(UpdateReviewDTO updateReviewDTO) throws InvalidConcertIdException, InvalidStarsException, ConcertNotPerformedException {
         Review reviewToUpdate = this.reviewRepository.findById(updateReviewDTO.getReviewId()).orElseThrow();
         if (updateReviewDTO.getConcertId() < 0) {
             throw new InvalidConcertIdException();
@@ -101,17 +99,24 @@ public class ReviewService {
      * @return true if everything went well
      * @throws InvalidConcertIdException if the id is invalid, this is thrown
      */
-    private boolean checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException {
-        RestTemplate restTemplate = new RestTemplate();
-        try {
-            String response = restTemplate.getForObject("http://host.docker.internal:9090/concert/" + concertID, String.class);
-            String day = response.substring(response.indexOf("day") + 6, response.indexOf("day") + 16);
-            LocalDate dateOfConcert = LocalDate.parse(day, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            if (LocalDate.now().isBefore(dateOfConcert)) {
-                return false;
-            }
-        } catch (HttpClientErrorException e) {
+    private boolean checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException, ConcertNotPerformedException {
+        WebClient client = WebClient.create();
+        ResponseEntity<String> response = client.get().uri("http://host.docker.internal:9090/concert/valid-review?id=" + concertID)
+                .retrieve()
+                .onStatus(
+                        status -> status.value() == 400,
+                        clientResponse -> Mono.empty()
+                )
+                .onStatus(
+                        status -> status.value() == 404,
+                        clientResponse -> Mono.empty()
+                )
+                .toEntity(String.class).block();
+        if (response != null && response.getStatusCodeValue() == 404) {
             throw new InvalidConcertIdException();
+        }
+        if (response != null && response.getStatusCodeValue() == 400) {
+            throw new ConcertNotPerformedException();
         }
         return true;
     }
