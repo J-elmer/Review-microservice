@@ -114,6 +114,7 @@ public class ReviewController {
         }
     }
 
+    @GetMapping(value="by-performer")
     public List<Review> getReviewsByPerformerId(@RequestParam long performerId) {
         return this.reviewService.findReviewByPerformerId(performerId);
     }
