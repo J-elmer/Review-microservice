@@ -13,13 +13,15 @@ public class Review {
     private LocalDateTime dateTimeofReview;
     private int numberOfStars;
     private String reviewText;
+    private long performerId;
 
-    public Review(long concertId, String authorName, int numberOfStars, String reviewText) {
+    public Review(long concertId, String authorName, int numberOfStars, String reviewText, long performerId) {
         this.concertId = concertId;
         this.authorName = authorName;
         this.dateTimeofReview = LocalDateTime.now();
         this.numberOfStars = numberOfStars;
         this.reviewText = reviewText;
+        this.performerId = performerId;
     }
 
     public String getId() {
@@ -70,6 +72,14 @@ public class Review {
         this.reviewText = reviewText;
     }
 
+    public long getPerformerId() {
+        return performerId;
+    }
+
+    public void setPerformerId(long performerId) {
+        this.performerId = performerId;
+    }
+
     @Override
     public String toString() {
         return "Review{" +
@@ -79,6 +89,7 @@ public class Review {
                 ", dateTimeofReview=" + dateTimeofReview +
                 ", numberOfStars=" + numberOfStars +
                 ", reviewText='" + reviewText + '\'' +
+                ", performerId=" + performerId +
                 '}';
     }
 

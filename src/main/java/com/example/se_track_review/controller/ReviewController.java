@@ -113,4 +113,8 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JsonResponseDTO("Invalid concertId"));
         }
     }
+
+    public List<Review> getReviewsByPerformerId(@RequestParam long performerId) {
+        return this.reviewService.findReviewByPerformerId(performerId);
+    }
 }

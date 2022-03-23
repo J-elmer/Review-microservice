@@ -2,6 +2,7 @@ package com.example.se_track_review.service;
 
 import com.example.se_track_review.controller.NewReviewDTO;
 import com.example.se_track_review.controller.UpdateReviewDTO;
+import com.example.se_track_review.controller.ValidReviewDTO;
 import com.example.se_track_review.exception.ConcertNotPerformedException;
 import com.example.se_track_review.exception.InvalidConcertIdException;
 import com.example.se_track_review.exception.InvalidStarsException;
@@ -39,6 +40,10 @@ public class ReviewService {
         return this.reviewRepository.findByNumberOfStarsLessThanEqual(numberOfStars);
     }
 
+    public List<Review> findReviewByPerformerId(long performerId) {
+       return this.reviewRepository.findByPerformerId(performerId);
+    }
+
     public Review findById(String id) {
         return this.reviewRepository.findById(id).orElseThrow();
     }
@@ -50,8 +55,9 @@ public class ReviewService {
      * @return Review created
      */
     public Review newReview(NewReviewDTO newReviewDTO) throws InvalidConcertIdException, ConcertNotPerformedException {
-        if (this.checkIfConcertIdIsValid(newReviewDTO.getConcertId())) {
-            Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars(), newReviewDTO.getReviewText());
+        ValidReviewDTO validReview = this.checkIfConcertIdIsValid(newReviewDTO.getConcertId());
+        if (validReview.isCanBeReviewed()) {
+            Review reviewToBeSaved = new Review(newReviewDTO.getConcertId(), newReviewDTO.getAuthorName(), newReviewDTO.getNumberOfStars(), newReviewDTO.getReviewText(), validReview.getPerformerId());
             return this.reviewRepository.save(reviewToBeSaved);
         }
         return null;
@@ -99,9 +105,9 @@ public class ReviewService {
      * @return true if everything went well
      * @throws InvalidConcertIdException if the id is invalid, this is thrown
      */
-    private boolean checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException, ConcertNotPerformedException {
+    public ValidReviewDTO checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException, ConcertNotPerformedException {
         WebClient client = WebClient.create();
-        ResponseEntity<String> response = client.get().uri("http://host.docker.internal:9090/concert/valid-review?id=" + concertID)
+        ResponseEntity<ValidReviewDTO> response = client.get().uri("http://host.docker.internal:9090/concert/valid-review?id=" + concertID)
                 .retrieve()
                 .onStatus(
                         status -> status.value() == 400,
@@ -111,13 +117,14 @@ public class ReviewService {
                         status -> status.value() == 404,
                         clientResponse -> Mono.empty()
                 )
-                .toEntity(String.class).block();
+                .toEntity(ValidReviewDTO.class).block();
         if (response != null && response.getStatusCodeValue() == 404) {
             throw new InvalidConcertIdException();
         }
         if (response != null && response.getStatusCodeValue() == 400) {
             throw new ConcertNotPerformedException();
         }
-        return true;
+        assert response != null;
+        return response.getBody();
     }
 }

@@ -12,4 +12,6 @@ public interface ReviewRepository extends MongoRepository<Review, String> {
     List<Review> findByNumberOfStarsGreaterThanEqual(int numberOfStars);
 
     List<Review> findByNumberOfStarsLessThanEqual(int numberOfStars);
+
+    List<Review> findByPerformerId(long performerId);
 }

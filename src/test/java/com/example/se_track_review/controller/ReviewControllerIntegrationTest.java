@@ -1,5 +1,7 @@
 package com.example.se_track_review.controller;
 
+import com.example.se_track_review.exception.ConcertNotPerformedException;
+import com.example.se_track_review.exception.InvalidConcertIdException;
 import com.example.se_track_review.model.Review;
 import com.example.se_track_review.repository.ReviewRepository;
 import com.example.se_track_review.service.ReviewService;
@@ -7,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +40,9 @@ class ReviewControllerIntegrationTest {
     private static String idReview2;
     private static String idReview3;
     private static String idNewReview;
-    private static Review reviewUnderTest1 = new Review(1, "test", 2, "It was okay");
-    private static Review reviewUnderTest2 = new Review(2, "test", 4, "It was great");
-    private static Review reviewUnderTest3 = new Review(3, "test", 5, "Great concert, great performer");
+    private static Review reviewUnderTest1 = new Review(1, "test", 2, "It was okay", 1);
+    private static Review reviewUnderTest2 = new Review(2, "test", 4, "It was great", 1);
+    private static Review reviewUnderTest3 = new Review(3, "test", 5, "Great concert, great performer", 3);
     private static List<Review> expected = new ArrayList<>();
 
     @Autowired
@@ -49,15 +53,21 @@ class ReviewControllerIntegrationTest {
     private ReviewService reviewService;
     @Autowired
     private ReviewRepository reviewRepository;
+    public static MockWebServer mockWebServer;
 
     @BeforeAll
-    void populateDatabase() {
+    void populateDatabase() throws IOException {
         idReview1 = this.reviewRepository.save(reviewUnderTest1).getId();
         idReview2 = this.reviewRepository.save(reviewUnderTest2).getId();
         idReview3 = this.reviewRepository.save(reviewUnderTest3).getId();
         expected.add(reviewUnderTest1);
         expected.add(reviewUnderTest2);
         expected.add(reviewUnderTest3);
+    }
+
+    @AfterAll
+    static void tearDown() throws IOException {
+        mockWebServer.shutdown();
     }
 
     @Test
@@ -156,7 +166,7 @@ class ReviewControllerIntegrationTest {
 
     @Test
     @Order(5)
-    void newReview() {
+    void newReview() throws InvalidConcertIdException, ConcertNotPerformedException {
         NewReviewDTO addReview = new NewReviewDTO(2, "test", 3, "It was awesome");
         MvcResult mvcResult = null;
         try {
