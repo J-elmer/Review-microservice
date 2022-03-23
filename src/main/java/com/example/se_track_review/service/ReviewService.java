@@ -19,9 +19,11 @@ import java.util.List;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final WebClient client;
 
     public ReviewService(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
+        this.client = WebClient.create();
     }
 
     public List<Review> getAllReviews() {
@@ -105,8 +107,7 @@ public class ReviewService {
      * @return true if everything went well
      * @throws InvalidConcertIdException if the id is invalid, this is thrown
      */
-    public ValidReviewDTO checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException, ConcertNotPerformedException {
-        WebClient client = WebClient.create();
+    private ValidReviewDTO checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException, ConcertNotPerformedException {
         ResponseEntity<ValidReviewDTO> response = client.get().uri("http://host.docker.internal:9090/concert/valid-review?id=" + concertID)
                 .retrieve()
                 .onStatus(

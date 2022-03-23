@@ -53,7 +53,6 @@ class ReviewControllerIntegrationTest {
     private ReviewService reviewService;
     @Autowired
     private ReviewRepository reviewRepository;
-    public static MockWebServer mockWebServer;
 
     @BeforeAll
     void populateDatabase() throws IOException {
@@ -63,11 +62,6 @@ class ReviewControllerIntegrationTest {
         expected.add(reviewUnderTest1);
         expected.add(reviewUnderTest2);
         expected.add(reviewUnderTest3);
-    }
-
-    @AfterAll
-    static void tearDown() throws IOException {
-        mockWebServer.shutdown();
     }
 
     @Test
