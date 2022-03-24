@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -117,5 +118,15 @@ public class ReviewController {
     @GetMapping(value="by-performer")
     public List<Review> getReviewsByPerformerId(@RequestParam long performerId) {
         return this.reviewService.findReviewByPerformerId(performerId);
+    }
+
+    @GetMapping(value="id-by-performer")
+    public List<String> getReviewIdsByPerformerId(@RequestParam long performerId) {
+        List<Review> reviews = this.reviewService.findReviewByPerformerId(performerId);
+        List<String> reviewIds = new ArrayList<>();
+        for (Review review: reviews) {
+            reviewIds.add(review.getId());
+        }
+        return reviewIds;
     }
 }
