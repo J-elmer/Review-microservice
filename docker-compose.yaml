@@ -2,10 +2,27 @@ version: '3.1'
 
 services:
 
+  review:
+    image: review-service:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7070:7070"
+    networks:
+      - review
+    depends_on:
+      - mongo
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongo:27017
+      - SPRING_DATA_MONGODB_DATABASE=reviews
+
   mongo:
     image: mongo
     restart: always
     hostname: mongo
+    networks:
+      - review
     volumes:
       - mongo_data:/data/db
     ports:
@@ -14,6 +31,8 @@ services:
   mongo-express:
     image: mongo-express
     restart: always
+    networks:
+      - review
     ports:
       - 8081:8081
     environment:
@@ -23,3 +42,7 @@ services:
 
 volumes:
   mongo_data:
+
+networks:
+  review:
+    driver: bridge
