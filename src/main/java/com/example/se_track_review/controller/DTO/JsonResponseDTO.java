@@ -1,4 +1,4 @@
-package com.example.se_track_review.controller;
+package com.example.se_track_review.controller.DTO;
 
 /**
  * Simple object used to return JsonResponses containing a String in the controller

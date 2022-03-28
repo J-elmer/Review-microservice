@@ -1,8 +1,8 @@
 package com.example.se_track_review.service;
 
-import com.example.se_track_review.controller.NewReviewDTO;
-import com.example.se_track_review.controller.UpdateReviewDTO;
-import com.example.se_track_review.controller.ValidReviewDTO;
+import com.example.se_track_review.controller.DTO.NewReviewDTO;
+import com.example.se_track_review.controller.DTO.UpdateReviewDTO;
+import com.example.se_track_review.controller.DTO.ValidReviewDTO;
 import com.example.se_track_review.exception.ConcertNotPerformedException;
 import com.example.se_track_review.exception.InvalidConcertIdException;
 import com.example.se_track_review.exception.InvalidStarsException;

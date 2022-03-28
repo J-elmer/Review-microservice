@@ -1,5 +1,8 @@
 package com.example.se_track_review.controller;
 
+import com.example.se_track_review.controller.DTO.JsonResponseDTO;
+import com.example.se_track_review.controller.DTO.NewReviewDTO;
+import com.example.se_track_review.controller.DTO.UpdateReviewDTO;
 import com.example.se_track_review.exception.ConcertNotPerformedException;
 import com.example.se_track_review.exception.InvalidConcertIdException;
 import com.example.se_track_review.exception.InvalidStarsException;
@@ -16,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("review")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ReviewController {
 
     private final ReviewService reviewService;

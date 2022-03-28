@@ -1,4 +1,4 @@
-package com.example.se_track_review.controller;
+package com.example.se_track_review.controller.DTO;
 
 public final class ValidReviewDTO {
 
