@@ -1,7 +1,9 @@
 package com.example.se_track_review.model;
 
 import org.springframework.data.annotation.Id;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 
 public class Review {
@@ -10,7 +12,8 @@ public class Review {
     private String id;
     private long concertId;
     private String authorName;
-    private LocalDateTime dateTimeofReview;
+    private LocalDate dateOfReview;
+    private LocalTime timeOfReview;
     private int numberOfStars;
     private String reviewText;
     private long performerId;
@@ -18,7 +21,8 @@ public class Review {
     public Review(long concertId, String authorName, int numberOfStars, String reviewText, long performerId) {
         this.concertId = concertId;
         this.authorName = authorName;
-        this.dateTimeofReview = LocalDateTime.now();
+        this.dateOfReview = LocalDate.now();
+        this.timeOfReview = LocalTime.now();
         this.numberOfStars = numberOfStars;
         this.reviewText = reviewText;
         this.performerId = performerId;
@@ -48,12 +52,20 @@ public class Review {
         this.authorName = authorName;
     }
 
-    public LocalDateTime getDateTimeofReview() {
-        return dateTimeofReview;
+    public LocalDate getDateOfReview() {
+        return dateOfReview;
     }
 
-    public void setDateTimeofReview(LocalDateTime dateTimeofReview) {
-        this.dateTimeofReview = dateTimeofReview;
+    public void setDateOfReview(LocalDate dateOfReview) {
+        this.dateOfReview = dateOfReview;
+    }
+
+    public LocalTime getTimeOfReview() {
+        return timeOfReview;
+    }
+
+    public void setTimeOfReview(LocalTime timeOfReview) {
+        this.timeOfReview = timeOfReview;
     }
 
     public int getNumberOfStars() {
@@ -86,7 +98,7 @@ public class Review {
                 "id='" + id + '\'' +
                 ", concertId=" + concertId +
                 ", authorName='" + authorName + '\'' +
-                ", dateTimeofReview=" + dateTimeofReview +
+                ", dateTimeofReview=" + dateOfReview +
                 ", numberOfStars=" + numberOfStars +
                 ", reviewText='" + reviewText + '\'' +
                 ", performerId=" + performerId +
