@@ -13,7 +13,6 @@ public class Review {
     private long concertId;
     private String authorName;
     private LocalDate dateOfReview;
-    private LocalTime timeOfReview;
     private int numberOfStars;
     private String reviewText;
     private long performerId;
@@ -22,7 +21,6 @@ public class Review {
         this.concertId = concertId;
         this.authorName = authorName;
         this.dateOfReview = LocalDate.now();
-        this.timeOfReview = LocalTime.now();
         this.numberOfStars = numberOfStars;
         this.reviewText = reviewText;
         this.performerId = performerId;
@@ -58,14 +56,6 @@ public class Review {
 
     public void setDateOfReview(LocalDate dateOfReview) {
         this.dateOfReview = dateOfReview;
-    }
-
-    public LocalTime getTimeOfReview() {
-        return timeOfReview;
-    }
-
-    public void setTimeOfReview(LocalTime timeOfReview) {
-        this.timeOfReview = timeOfReview;
     }
 
     public int getNumberOfStars() {
