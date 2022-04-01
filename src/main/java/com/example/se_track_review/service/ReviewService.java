@@ -72,7 +72,7 @@ public class ReviewService {
      * @throws InvalidStarsException if the number of stars is less than 1 or greater than 5
      */
     public void updateReview(UpdateReviewDTO updateReviewDTO) throws InvalidConcertIdException, InvalidStarsException, ConcertNotPerformedException {
-        Review reviewToUpdate = this.reviewRepository.findById(updateReviewDTO.getReviewId()).orElseThrow();
+        Review reviewToUpdate = this.reviewRepository.findById(updateReviewDTO.getId()).orElseThrow();
         if (updateReviewDTO.getConcertId() < 0) {
             throw new InvalidConcertIdException();
         }
