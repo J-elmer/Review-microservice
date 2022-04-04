@@ -46,6 +46,10 @@ public class ReviewService {
        return this.reviewRepository.findByPerformerId(performerId);
     }
 
+    public List<Review> findReviewByConcertId(long concertId) {
+        return this.reviewRepository.findByConcertId(concertId);
+    }
+
     public Review findById(String id) {
         return this.reviewRepository.findById(id).orElseThrow();
     }

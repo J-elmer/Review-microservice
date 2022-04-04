@@ -3,7 +3,6 @@ package com.example.se_track_review.model;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Objects;
 
 public class Review {

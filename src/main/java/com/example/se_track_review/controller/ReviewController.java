@@ -133,4 +133,9 @@ public class ReviewController {
         }
         return reviewIds;
     }
+
+    @GetMapping(value="review-by-concert")
+    public List<Review> getReviewsByConcertId(@RequestParam long concertId) {
+        return this.reviewService.findReviewByConcertId(concertId);
+    }
 }
