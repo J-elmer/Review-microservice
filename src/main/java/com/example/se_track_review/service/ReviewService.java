@@ -1,11 +1,13 @@
 package com.example.se_track_review.service;
 
+import com.example.se_track_review.controller.DTO.JsonResponseDTO;
 import com.example.se_track_review.controller.DTO.NewReviewDTO;
 import com.example.se_track_review.controller.DTO.UpdateReviewDTO;
 import com.example.se_track_review.controller.DTO.ValidReviewDTO;
 import com.example.se_track_review.exception.ConcertNotPerformedException;
 import com.example.se_track_review.exception.InvalidConcertIdException;
 import com.example.se_track_review.exception.InvalidStarsException;
+import com.example.se_track_review.exception.ReviewNotFoundException;
 import com.example.se_track_review.model.Review;
 import com.example.se_track_review.repository.ReviewRepository;
 import org.springframework.http.*;
@@ -14,6 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.OptionalDouble;
 
 @Service
 public class ReviewService {
@@ -103,6 +106,26 @@ public class ReviewService {
 
     public void deleteReview(String reviewId) throws InvalidConcertIdException {
         this.reviewRepository.deleteById(reviewId);
+    }
+
+    /**
+     * Method calculates the average stars a concert has based on all reviews. Rounds it up or down
+     * @param concertId of concert
+     * @return integer presenting the average
+     * @throws ReviewNotFoundException if review is not found
+     */
+    public int getAverageStarsOfConcert(long concertId) throws ReviewNotFoundException {
+        List<Review> reviewsOfConcert = this.findReviewByConcertId(concertId);
+        if (reviewsOfConcert.isEmpty()) {
+            throw new ReviewNotFoundException();
+        }
+        List<Integer> stars = reviewsOfConcert.stream()
+                .map(Review::getNumberOfStars).toList();
+        OptionalDouble averageDouble = stars.stream()
+                .mapToDouble(a -> a).
+                average();
+        double roundedAverage = Math.round(averageDouble.orElseThrow());
+        return (int)roundedAverage;
     }
 
     /**

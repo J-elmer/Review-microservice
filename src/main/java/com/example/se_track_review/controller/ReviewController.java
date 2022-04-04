@@ -6,6 +6,7 @@ import com.example.se_track_review.controller.DTO.UpdateReviewDTO;
 import com.example.se_track_review.exception.ConcertNotPerformedException;
 import com.example.se_track_review.exception.InvalidConcertIdException;
 import com.example.se_track_review.exception.InvalidStarsException;
+import com.example.se_track_review.exception.ReviewNotFoundException;
 import com.example.se_track_review.model.Review;
 import com.example.se_track_review.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("review")
@@ -69,6 +74,21 @@ public class ReviewController {
     }
 
     /**
+     * endpoint to get average number of stars by concert id
+     * @param concertId of concert
+     * @return average number of stars
+     */
+    @GetMapping(value="average-stars")
+    public ResponseEntity<?> getAverageStarsOfConcert(@RequestParam long concertId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(this.reviewService.getAverageStarsOfConcert(concertId));
+        } catch (ReviewNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(new JsonResponseDTO("No reviews found of concert with id " + concertId));
+        }
+    }
+
+    /**
      * endpoint to create new review
      * @param newReviewDTO dto with necessary information
      * @return HttpStatus 201 if everything went well, else 400
@@ -119,11 +139,21 @@ public class ReviewController {
         }
     }
 
+    /**
+     * get Reviews by performer id
+     * @param performerId of performer
+     * @return List of reviews
+     */
     @GetMapping(value="by-performer")
     public List<Review> getReviewsByPerformerId(@RequestParam long performerId) {
         return this.reviewService.findReviewByPerformerId(performerId);
     }
 
+    /**
+     * get Reviewids by performer id
+     * @param performerId of performer
+     * @return list of strings containing review ids
+     */
     @GetMapping(value="id-by-performer")
     public List<String> getReviewIdsByPerformerId(@RequestParam long performerId) {
         List<Review> reviews = this.reviewService.findReviewByPerformerId(performerId);
@@ -134,6 +164,11 @@ public class ReviewController {
         return reviewIds;
     }
 
+    /**
+     * get Reviews by concert id
+     * @param concertId of concert
+     * @return list of Reviews
+     */
     @GetMapping(value="review-by-concert")
     public List<Review> getReviewsByConcertId(@RequestParam long concertId) {
         return this.reviewService.findReviewByConcertId(concertId);
