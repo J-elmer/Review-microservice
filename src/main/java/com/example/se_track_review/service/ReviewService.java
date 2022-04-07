@@ -109,6 +109,15 @@ public class ReviewService {
     }
 
     /**
+     * search reviews and return reviews containing the searched term
+     * @param term to search
+     * @return list of reviews
+     */
+    public List<Review> searchReviewTexts(String term) {
+        return this.reviewRepository.findReviewByReviewTextContainsIgnoreCase(term);
+    }
+
+    /**
      * Method calculates the average stars a concert has based on all reviews. Rounds it up or down
      * @param concertId of concert
      * @return integer presenting the average

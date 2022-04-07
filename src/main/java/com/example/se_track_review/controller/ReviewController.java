@@ -15,12 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("review")
@@ -172,5 +169,10 @@ public class ReviewController {
     @GetMapping(value="review-by-concert")
     public List<Review> getReviewsByConcertId(@RequestParam long concertId) {
         return this.reviewService.findReviewByConcertId(concertId);
+    }
+
+    @GetMapping(value="/search")
+    public List<Review> searchReviewTextsWithTerm(@RequestParam String term) {
+        return this.reviewService.searchReviewTexts(term);
     }
 }

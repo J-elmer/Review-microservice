@@ -16,4 +16,6 @@ public interface ReviewRepository extends MongoRepository<Review, String> {
     List<Review> findByPerformerId(long performerId);
 
     List<Review> findByConcertId(long concertId);
+
+    List<Review> findReviewByReviewTextContainsIgnoreCase(String term);
 }
