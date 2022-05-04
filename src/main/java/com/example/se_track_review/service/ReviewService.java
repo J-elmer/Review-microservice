@@ -10,6 +10,7 @@ import com.example.se_track_review.exception.InvalidStarsException;
 import com.example.se_track_review.exception.ReviewNotFoundException;
 import com.example.se_track_review.model.Review;
 import com.example.se_track_review.repository.ReviewRepository;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,10 +24,12 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final WebClient client;
+    private final Environment env;
 
-    public ReviewService(ReviewRepository reviewRepository) {
+    public ReviewService(ReviewRepository reviewRepository, Environment env) {
         this.reviewRepository = reviewRepository;
         this.client = WebClient.create();
+        this.env = env;
     }
 
     public List<Review> getAllReviews() {
@@ -144,7 +147,8 @@ public class ReviewService {
      * @throws InvalidConcertIdException if the id is invalid, this is thrown
      */
     private ValidReviewDTO checkIfConcertIdIsValid(long concertID) throws InvalidConcertIdException, ConcertNotPerformedException {
-        ResponseEntity<ValidReviewDTO> response = client.get().uri("http://host.docker.internal:9090/concert/valid-review?id=" + concertID)
+        String apiUrl = this.env.getProperty("concert.api") + "valid-review?id=";
+        ResponseEntity<ValidReviewDTO> response = client.get().uri(apiUrl + concertID)
                 .retrieve()
                 .onStatus(
                         status -> status.value() == 400,
